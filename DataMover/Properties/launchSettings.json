@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "DataMover": {
+        "commandName": "Project",
+        "commandLineArgs": "pgqes -pgConn \"Server=localhost;Port=25432;Database=jsi_otaintegtest;User ID=datamanagement_readwrite;Password=q%s^YM03YDIXWiAvb1MV;\" -q \"SELECT COUNT(*) FROM FROM tsd.t_fleet_utilization_forecast_stage\""
+        //"commandLineArgs": "df2ss -dfPath \"C:\\Users\\bmorris\\source\\repos\\FRACDEV\\data\\Integrations.Scripts\\Dimensions\\windowsZones.csv\" -cd \",\" -head -ssConn \"Data Source=tsd-sql02-aws.fox.local;Initial Catalog=Integrations;Integrated Security=True;Trust Server Certificate=True;Application Name=SS2PG Reserve Sync;Workstation ID=TUL-IT-WL-19;\" -trgSchema \"Dimensions\" -trgTable \"Stage_TimeZoneMap\" -m Name -trunc -ll Verbose"
+    }
+  }
+}
