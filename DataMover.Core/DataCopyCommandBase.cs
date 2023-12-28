@@ -44,6 +44,11 @@ namespace DataMover.Core
 				}
 				this.SourceColumns = this.SourceDataLayer.GetColumns();
 				this.TargetColumns = this.TargetDataLayer.GetColumns();
+				if (this.TargetColumns.Count == 0)
+				{
+					this.TargetDataLayer.SetColumns(this.SourceColumns);
+					this.TargetColumns = this.TargetDataLayer.GetColumns();
+				}
 				switch (MatchingMethod)
 				{
 					case ColumnMatchingMethod.Position:
@@ -85,7 +90,7 @@ namespace DataMover.Core
 						ConsoleText.Blue($"Truncating {this.TargetDataLayer.QualifiedObjectName}."),
 						ConsoleText.BlankLine()
 					);
-					TargetDataLayer.Truncate();
+					this.TargetDataLayer.Truncate();
 				}
 				if (sourceDataTable.Rows.Count > 0)
 				{
@@ -93,7 +98,7 @@ namespace DataMover.Core
 						ConsoleText.Blue($"Writing {sourceDataTable.Rows.Count} from \"{this.SourceDataLayer.QualifiedObjectName}\" to \"{this.TargetDataLayer.QualifiedObjectName}\"."),
 						ConsoleText.BlankLine()
 					);
-					TargetDataLayer.WriteDataTable(sourceDataTable, this.Mappings);
+					this.TargetDataLayer.WriteDataTable(sourceDataTable, this.Mappings);
 				}
 				else
 					WriteOutput(LogLevel.Information,

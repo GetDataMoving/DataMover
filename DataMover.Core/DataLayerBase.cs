@@ -65,7 +65,10 @@ namespace DataMover.Core
         public virtual List<DatabaseTableColumn> GetColumns()
             => throw new NotImplementedException();
 
-        public virtual void Truncate()
+		public virtual void SetColumns(IEnumerable<DatabaseTableColumn> columns)
+            => throw new NotImplementedException();
+
+		public virtual void Truncate()
             => throw new NotImplementedException();
 
         public virtual DataTable GetDataTable()

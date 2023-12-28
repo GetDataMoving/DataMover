@@ -69,6 +69,11 @@ namespace DataMover.Basics.DataLayers
 			return returnValue;
 		}
 
+		public override void SetColumns(IEnumerable<DatabaseTableColumn> columns)
+		{
+			//Do Nothing
+		}
+
 		public override void Truncate()
 		{
 			using SqlConnection sqlConnection = new(base.ConnectionString);

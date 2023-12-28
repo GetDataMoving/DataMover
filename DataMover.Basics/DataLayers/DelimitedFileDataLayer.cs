@@ -1,4 +1,5 @@
 ﻿using DataMover.Core;
+using DataMover.Core.Descriptors;
 using Microsoft.VisualBasic.FileIO;
 using System.Data;
 
@@ -9,7 +10,8 @@ namespace DataMover.Basics.DataLayers
 		public String FilePath => base.ConnectionString;
 		public String ColumnDelimiter { get; set; } = ",";
 		public Boolean HasHeaderRow { get; set; } = true;
-		public List<DatabaseTableColumn>? ProvidedColumns { get; set; }
+		//public List<DatabaseTableColumn>? ProvidedColumns { get; set; }
+		public List<DatabaseTableColumn>? Columns { get; set; } = [];
 
 		public DelimitedFileDataLayer()
 			: base("DelimitedFile", "Provides access to methods for delimited files.")
@@ -23,7 +25,7 @@ namespace DataMover.Basics.DataLayers
 			: base("DelimitedFile", "Provides access to methods for delimited files.", filePath)
 		{
 			base.SetQuailifiedNames(Path.GetDirectoryName(filePath), filePath);
-			this.ColumnDelimiter = columnDelimiter;
+			this.ColumnDelimiter = (columnDelimiter.Equals("\\t") ? "\t" : columnDelimiter);
 			this.HasHeaderRow = hasHeaderRow;
 		}
 
@@ -31,43 +33,46 @@ namespace DataMover.Basics.DataLayers
 			: base("DelimitedFile", "Provides access to methods for delimited files.", filePath)
 		{
 			base.SetQuailifiedNames(Path.GetDirectoryName(filePath), filePath);
-			this.ColumnDelimiter = columnDelimiter;
+			this.ColumnDelimiter = (columnDelimiter.Equals("\\t") ? "\t" : columnDelimiter);
 			this.HasHeaderRow = hasHeaderRow;
 			Int32 position = 1;
-			this.ProvidedColumns = [];
+			this.Columns = [];
 			foreach (String column in columns)
-				this.ProvidedColumns.Add(new((position ++), column, "String"));
+				this.Columns.Add(new((position ++), column, "String"));
 		}
-
-		public List<DatabaseTableColumn> Columns { get; set; } = [];
 
 		public override List<DatabaseTableColumn> GetColumns()
 		{
-			if (this.ProvidedColumns is not null)
-				this.Columns = this.ProvidedColumns;
-			else
+			if (this.Columns is null)
 			{
-				if (!File.Exists(this.FilePath))
-					throw new FileNotFoundException();
-				this.Columns.Clear();
-				if (this.HasHeaderRow)
+				this.Columns ??= [];
+				if (File.Exists(this.FilePath))
 				{
-					using TextFieldParser textFieldParser = new(this.FilePath);
-					textFieldParser.TextFieldType = FieldType.Delimited;
-					textFieldParser.Delimiters = [this.ColumnDelimiter];
-					Boolean isFirstRow = true;
-					while (!textFieldParser.EndOfData && isFirstRow)
+					this.Columns.Clear();
+					if (this.HasHeaderRow)
 					{
-						isFirstRow = false;
-						String[]? headerRow = textFieldParser.ReadFields();
-						if (headerRow is not null)
-							for (Int32 columnIndex = 0; columnIndex < headerRow.Length; columnIndex++)
-								this.Columns.Add(new DatabaseTableColumn((columnIndex + 1), headerRow[columnIndex], "String"));
+						using TextFieldParser textFieldParser = new(this.FilePath);
+						textFieldParser.TextFieldType = FieldType.Delimited;
+						textFieldParser.Delimiters = [this.ColumnDelimiter];
+						Boolean isFirstRow = true;
+						while (!textFieldParser.EndOfData && isFirstRow)
+						{
+							isFirstRow = false;
+							String[]? headerRow = textFieldParser.ReadFields();
+							if (headerRow is not null)
+								for (Int32 columnIndex = 0; columnIndex < headerRow.Length; columnIndex++)
+									this.Columns.Add(new DatabaseTableColumn((columnIndex + 1), headerRow[columnIndex], "String"));
+						}
 					}
 				}
 			}
 			return this.Columns;
 		}
+
+		public override void SetColumns(IEnumerable<DatabaseTableColumn> columns)
+			=> this.Columns = columns
+				.Select(c => new DatabaseTableColumn(c.Postion, c.Name, "String"))
+				.ToList();
 
 		public override void Truncate()
 		{
@@ -117,7 +122,7 @@ namespace DataMover.Basics.DataLayers
 						returnValue.Rows.Add(dataRow);
 				}
 			}
-			this.Columns.Clear();
+			this.Columns = [];
 			foreach (DataColumn dataColumn in returnValue.Columns)
 				this.Columns.Add(new DatabaseTableColumn(dataColumn.Ordinal, dataColumn.ColumnName, dataColumn.DataType.Name));
 			return returnValue;
@@ -133,22 +138,7 @@ namespace DataMover.Basics.DataLayers
 		public void WriteHeader()
 		{
 			using StreamWriter streamWriter = new(this.FilePath, false);
-			if (
-				this.ProvidedColumns is not null
-				&& this.ProvidedColumns.Count > 0)
-			{
-				String line = String.Empty;
-				foreach (DatabaseTableColumn databaseTableColumn in this.ProvidedColumns.OrderBy(d => d.Postion))
-					line +=
-						databaseTableColumn.Name.Contains(this.ColumnDelimiter)
-							? $"\"{databaseTableColumn.Name}\"{this.ColumnDelimiter}"
-							: $"{databaseTableColumn.Name}{this.ColumnDelimiter}"
-					;
-				if (line.EndsWith(this.ColumnDelimiter))
-					line = line[..^this.ColumnDelimiter.Length];
-				streamWriter.WriteLine($"{line}");
-			}
-			else if (this.Columns.Count > 0)
+			if (this.Columns is not null && this.Columns.Count > 0)
 			{
 				String line = String.Empty;
 				foreach (DatabaseTableColumn databaseTableColumn in this.Columns.OrderBy(d => d.Postion))

@@ -67,7 +67,12 @@ namespace DataMover.Basics.DataLayers
             return returnValue;
         }
 
-        public override void Truncate()
+		public override void SetColumns(IEnumerable<DatabaseTableColumn> columns)
+		{
+			//Do Nothing
+		}
+
+		public override void Truncate()
         {
             using NpgsqlConnection npgsqlConnection = new(base.ConnectionString);
             using NpgsqlCommand npgsqlCommand = new()

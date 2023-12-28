@@ -4,6 +4,7 @@ If (![IO.File]::Exists($DataMoverExecutablePath))
     Throw [IO.FileNotFoundException]::new($DataMoverExecutablePath);
 }
 
+#region PostgreSQL
 Function Invoke-DataMoverPG2SS()
 {
     [OutputType([String])]
@@ -29,7 +30,7 @@ Function Invoke-DataMoverPG2SS()
 
         [Parameter(Mandatory=$false)]
         [ValidateSet("Name", "Position")]
-        [String] $ColumnMatchingMethod = "Position",
+        [String] $ColumnMatchingMethod = "Name",
        
         [Parameter(Mandatory=$false)]
         [Switch] $TruncateTargetTable = $false,
@@ -70,20 +71,11 @@ Function Invoke-DataMoverPG2SS()
     Return $ReturnValue;
 }
 
-Function Invoke-DataMoverSS2PG()
+Function Invoke-DataMoverPG2DF()
 {
     [OutputType([String])]
     Param
     (
-        [Parameter(Mandatory=$true)]
-        [String] $SQLServerConnectionString,
-
-        [Parameter(Mandatory=$true)]
-        [String] $SQLServerSchema,
-
-        [Parameter(Mandatory=$true)]
-        [String] $SQLServerTable,
-
         [Parameter(Mandatory=$true)]
         [String] $PostgreSQLConnectionString,
 
@@ -93,54 +85,6 @@ Function Invoke-DataMoverSS2PG()
         [Parameter(Mandatory=$true)]
         [String] $PostgreSQLTable,
 
-        [Parameter(Mandatory=$false)]
-        [ValidateSet("Name", "Position")]
-        [String] $ColumnMatchingMethod = "Position",
-       
-        [Parameter(Mandatory=$false)]
-        [Switch] $TruncateTargetTable = $false,
-
-        [Parameter(Mandatory=$false)]
-        [ValidateSet("Quiet", "Exception", "Verbose")]
-        [String] $LoggingLevel = "Verbose"
-    )
-    [String] $ReturnValue = [String]::Empty;
-    [System.Diagnostics.ProcessStartInfo] $ProcessStartInfo = [System.Diagnostics.ProcessStartInfo]::new();
-    $ProcessStartInfo.FileName = $DataMoverExecutablePath
-    $ProcessStartInfo.RedirectStandardError = $true;
-    $ProcessStartInfo.RedirectStandardOutput = $true;
-    $ProcessStartInfo.RedirectStandardInput = $true;
-    $ProcessStartInfo.UseShellExecute = $false;
-    $ProcessStartInfo.Arguments = @(
-        "ss2pg"
-
-        [String]::Format("-ssConn `"{0}`"", $SQLServerConnectionString),
-        [String]::Format("-srcSchema `"{0}`"", $SQLServerSchema),
-        [String]::Format("-srcTable `"{0}`"", $SQLServerTable),
-
-        [String]::Format("-pgConn `"{0}`"", $PostgreSQLConnectionString),
-        [String]::Format("-trgSchema `"{0}`"", $PostgreSQLSchema),
-        [String]::Format("-trgTable `"{0}`"", $PostgreSQLTable),
-
-        [String]::Format("-m `"{0}`"", $ColumnMatchingMethod),
-        [String]::Format("{0}",
-            ($TruncateTargetTable ? "-trunc" : "")
-        ),
-        [String]::Format("-ll `"{0}`"", $LoggingLevel)
-    );
-    [System.Diagnostics.Process] $Process = [System.Diagnostics.Process]::new();
-    $Process.StartInfo = $ProcessStartInfo;
-    [void] $Process.Start();
-    [void] $Process.WaitForExit();
-    $ReturnValue = $Process.StandardOutput.ReadToEnd();
-    Return $ReturnValue;
-}
-
-Function Invoke-DataMoverDF2SS()
-{
-    [OutputType([String])]
-    Param
-    (
         [Parameter(Mandatory=$true)]
         [String] $DelimitedFilePath,
 
@@ -150,18 +94,12 @@ Function Invoke-DataMoverDF2SS()
         [Parameter(Mandatory=$false)]
         [Switch] $HasHeaderRow = $false,
 
-        [Parameter(Mandatory=$true)]
-        [String] $SQLServerConnectionString,
-
-        [Parameter(Mandatory=$true)]
-        [String] $SQLServerSchema,
-
-        [Parameter(Mandatory=$true)]
-        [String] $SQLServerTable,
+        [Parameter(Mandatory=$false)]
+        [String[]] $Columns = @(),
 
         [Parameter(Mandatory=$false)]
         [ValidateSet("Name", "Position")]
-        [String] $ColumnMatchingMethod = "Position",
+        [String] $ColumnMatchingMethod = "Name",
        
         [Parameter(Mandatory=$false)]
         [Switch] $TruncateTargetTable = $false,
@@ -178,17 +116,24 @@ Function Invoke-DataMoverDF2SS()
     $ProcessStartInfo.RedirectStandardInput = $true;
     $ProcessStartInfo.UseShellExecute = $false;
     $ProcessStartInfo.Arguments = @(
-        "df2ss"
+        "pg2df"
+
+        [String]::Format("-pgConn `"{0}`"", $PostgreSQLConnectionString),
+        [String]::Format("-srcSchema `"{0}`"", $PostgreSQLSchema),
+        [String]::Format("-srcTable `"{0}`"", $PostgreSQLTable),
 
         [String]::Format("-dfPath `"{0}`"", $DelimitedFilePath),
-        [String]::Format("-cd `"{0}`"", $ColumnDelimiter),
+        [String]::Format("-cd `"{0}`"",
+            ($ColumnDelimiter.Equals("`t") ? "\t" : $ColumnDelimiter)
+        ),
         [String]::Format("{0}",
             ($HasHeaderRow ? "-head" : "")
         ),
-
-        [String]::Format("-ssConn `"{0}`"", $SQLServerConnectionString),
-        [String]::Format("-trgSchema `"{0}`"", $SQLServerSchema),
-        [String]::Format("-trgTable `"{0}`"", $SQLServerTable),
+        [String]::Format("{0}",
+            (($Columns.Length > 0) ? 
+                [String]::Format("-cols `"{0}`"", ($Columns -join ",")) :
+                "")
+        ),
 
         [String]::Format("-m `"{0}`"", $ColumnMatchingMethod),
         [String]::Format("{0}",
@@ -303,6 +248,153 @@ Function Invoke-DataMoverPGQES()
     }
     Return $ReturnValue;
 }
+#endregion PostgreSQL
+
+#region SQL Server
+Function Invoke-DataMoverSS2PG()
+{
+    [OutputType([String])]
+    Param
+    (
+        [Parameter(Mandatory=$true)]
+        [String] $SQLServerConnectionString,
+
+        [Parameter(Mandatory=$true)]
+        [String] $SQLServerSchema,
+
+        [Parameter(Mandatory=$true)]
+        [String] $SQLServerTable,
+
+        [Parameter(Mandatory=$true)]
+        [String] $PostgreSQLConnectionString,
+
+        [Parameter(Mandatory=$true)]
+        [String] $PostgreSQLSchema,
+
+        [Parameter(Mandatory=$true)]
+        [String] $PostgreSQLTable,
+
+        [Parameter(Mandatory=$false)]
+        [ValidateSet("Name", "Position")]
+        [String] $ColumnMatchingMethod = "Name",
+       
+        [Parameter(Mandatory=$false)]
+        [Switch] $TruncateTargetTable = $false,
+
+        [Parameter(Mandatory=$false)]
+        [ValidateSet("Quiet", "Exception", "Verbose")]
+        [String] $LoggingLevel = "Verbose"
+    )
+    [String] $ReturnValue = [String]::Empty;
+    [System.Diagnostics.ProcessStartInfo] $ProcessStartInfo = [System.Diagnostics.ProcessStartInfo]::new();
+    $ProcessStartInfo.FileName = $DataMoverExecutablePath
+    $ProcessStartInfo.RedirectStandardError = $true;
+    $ProcessStartInfo.RedirectStandardOutput = $true;
+    $ProcessStartInfo.RedirectStandardInput = $true;
+    $ProcessStartInfo.UseShellExecute = $false;
+    $ProcessStartInfo.Arguments = @(
+        "ss2pg"
+
+        [String]::Format("-ssConn `"{0}`"", $SQLServerConnectionString),
+        [String]::Format("-srcSchema `"{0}`"", $SQLServerSchema),
+        [String]::Format("-srcTable `"{0}`"", $SQLServerTable),
+
+        [String]::Format("-pgConn `"{0}`"", $PostgreSQLConnectionString),
+        [String]::Format("-trgSchema `"{0}`"", $PostgreSQLSchema),
+        [String]::Format("-trgTable `"{0}`"", $PostgreSQLTable),
+
+        [String]::Format("-m `"{0}`"", $ColumnMatchingMethod),
+        [String]::Format("{0}",
+            ($TruncateTargetTable ? "-trunc" : "")
+        ),
+        [String]::Format("-ll `"{0}`"", $LoggingLevel)
+    );
+    [System.Diagnostics.Process] $Process = [System.Diagnostics.Process]::new();
+    $Process.StartInfo = $ProcessStartInfo;
+    [void] $Process.Start();
+    [void] $Process.WaitForExit();
+    $ReturnValue = $Process.StandardOutput.ReadToEnd();
+    Return $ReturnValue;
+}
+
+Function Invoke-DataMoverSS2DF()
+{
+    [OutputType([String])]
+    Param
+    (
+        [Parameter(Mandatory=$true)]
+        [String] $SQLServerConnectionString,
+
+        [Parameter(Mandatory=$true)]
+        [String] $SQLServerSchema,
+
+        [Parameter(Mandatory=$true)]
+        [String] $SQLServerTable,
+
+        [Parameter(Mandatory=$true)]
+        [String] $DelimitedFilePath,
+
+        [Parameter(Mandatory=$true)]
+        [String] $ColumnDelimiter,
+       
+        [Parameter(Mandatory=$false)]
+        [Switch] $HasHeaderRow = $false,
+
+        [Parameter(Mandatory=$false)]
+        [String[]] $Columns = @(),
+
+        [Parameter(Mandatory=$false)]
+        [ValidateSet("Name", "Position")]
+        [String] $ColumnMatchingMethod = "Name",
+       
+        [Parameter(Mandatory=$false)]
+        [Switch] $TruncateTargetTable = $false,
+
+        [Parameter(Mandatory=$false)]
+        [ValidateSet("Quiet", "Exception", "Verbose")]
+        [String] $LoggingLevel = "Verbose"
+    )
+    [String] $ReturnValue = [String]::Empty;
+    [System.Diagnostics.ProcessStartInfo] $ProcessStartInfo = [System.Diagnostics.ProcessStartInfo]::new();
+    $ProcessStartInfo.FileName = $DataMoverExecutablePath
+    $ProcessStartInfo.RedirectStandardError = $true;
+    $ProcessStartInfo.RedirectStandardOutput = $true;
+    $ProcessStartInfo.RedirectStandardInput = $true;
+    $ProcessStartInfo.UseShellExecute = $false;
+    $ProcessStartInfo.Arguments = @(
+        "ss2df"
+
+        [String]::Format("-ssConn `"{0}`"", $SQLServerConnectionString),
+        [String]::Format("-srcSchema `"{0}`"", $SQLServerSchema),
+        [String]::Format("-srcTable `"{0}`"", $SQLServerTable),
+
+        [String]::Format("-dfPath `"{0}`"", $DelimitedFilePath),
+        [String]::Format("-cd `"{0}`"",
+            ($ColumnDelimiter.Equals("`t") ? "\t" : $ColumnDelimiter)
+        ),
+        [String]::Format("{0}",
+            ($HasHeaderRow ? "-head" : "")
+        ),
+        [String]::Format("{0}",
+            (($Columns.Length > 0) ? 
+                [String]::Format("-cols `"{0}`"", ($Columns -join ",")) :
+                "")
+        ),
+
+        [String]::Format("-m `"{0}`"", $ColumnMatchingMethod),
+        [String]::Format("{0}",
+            ($TruncateTargetTable ? "-trunc" : "")
+        ),
+        [String]::Format("-ll `"{0}`"", $LoggingLevel)
+    );
+Write-Host ($ProcessStartInfo.Arguments);
+    [System.Diagnostics.Process] $Process = [System.Diagnostics.Process]::new();
+    $Process.StartInfo = $ProcessStartInfo;
+    [void] $Process.Start();
+    [void] $Process.WaitForExit();
+    $ReturnValue = $Process.StandardOutput.ReadToEnd();
+    Return $ReturnValue;
+}
 
 Function Invoke-DataMoverSSQE()
 {
@@ -403,6 +495,161 @@ Function Invoke-DataMoverSSQES()
     }
     Return $ReturnValue;
 }
+#endregion SQL Server
+
+#region Delimited File
+Function Invoke-DataMoverDF2PG()
+{
+    [OutputType([String])]
+    Param
+    (
+        [Parameter(Mandatory=$true)]
+        [String] $DelimitedFilePath,
+
+        [Parameter(Mandatory=$true)]
+        [String] $ColumnDelimiter,
+       
+        [Parameter(Mandatory=$false)]
+        [Switch] $HasHeaderRow = $false,
+
+        [Parameter(Mandatory=$true)]
+        [String] $PostgreSQLConnectionString,
+
+        [Parameter(Mandatory=$true)]
+        [String] $PostgreSQLSchema,
+
+        [Parameter(Mandatory=$true)]
+        [String] $PostgreSQLTable,
+
+        [Parameter(Mandatory=$false)]
+        [ValidateSet("Name", "Position")]
+        [String] $ColumnMatchingMethod = "Name",
+       
+        [Parameter(Mandatory=$false)]
+        [Switch] $TruncateTargetTable = $false,
+
+        [Parameter(Mandatory=$false)]
+        [ValidateSet("Quiet", "Exception", "Verbose")]
+        [String] $LoggingLevel = "Verbose"
+    )
+    [String] $ReturnValue = [String]::Empty;
+    [System.Diagnostics.ProcessStartInfo] $ProcessStartInfo = [System.Diagnostics.ProcessStartInfo]::new();
+    $ProcessStartInfo.FileName = $DataMoverExecutablePath
+    $ProcessStartInfo.RedirectStandardError = $true;
+    $ProcessStartInfo.RedirectStandardOutput = $true;
+    $ProcessStartInfo.RedirectStandardInput = $true;
+    $ProcessStartInfo.UseShellExecute = $false;
+    $ProcessStartInfo.Arguments = @(
+        "df2pg"
+
+        [String]::Format("-dfPath `"{0}`"", $DelimitedFilePath),
+        [String]::Format("-cd `"{0}`"",
+            ($ColumnDelimiter.Equals("`t") ? "\t" : $ColumnDelimiter)
+        ),
+        [String]::Format("{0}",
+            ($HasHeaderRow ? "-head" : "")
+        ),
+        [String]::Format("{0}",
+            (($Columns.Length > 0) ? 
+                [String]::Format("-cols `"{0}`"", ($Columns -join ",")) :
+                "")
+        ),
+
+        [String]::Format("-pgConn `"{0}`"", $PostgreSQLConnectionString),
+        [String]::Format("-trgSchema `"{0}`"", $PostgreSQLSchema),
+        [String]::Format("-trgTable `"{0}`"", $PostgreSQLTable),
+
+        [String]::Format("-m `"{0}`"", $ColumnMatchingMethod),
+        [String]::Format("{0}",
+            ($TruncateTargetTable ? "-trunc" : "")
+        ),
+        [String]::Format("-ll `"{0}`"", $LoggingLevel)
+    );
+    [System.Diagnostics.Process] $Process = [System.Diagnostics.Process]::new();
+    $Process.StartInfo = $ProcessStartInfo;
+    [void] $Process.Start();
+    [void] $Process.WaitForExit();
+    $ReturnValue = $Process.StandardOutput.ReadToEnd();
+    Return $ReturnValue;
+}
+
+Function Invoke-DataMoverDF2SS()
+{
+    [OutputType([String])]
+    Param
+    (
+        [Parameter(Mandatory=$true)]
+        [String] $DelimitedFilePath,
+
+        [Parameter(Mandatory=$true)]
+        [String] $ColumnDelimiter,
+       
+        [Parameter(Mandatory=$false)]
+        [Switch] $HasHeaderRow = $false,
+
+        [Parameter(Mandatory=$true)]
+        [String] $SQLServerConnectionString,
+
+        [Parameter(Mandatory=$true)]
+        [String] $SQLServerSchema,
+
+        [Parameter(Mandatory=$true)]
+        [String] $SQLServerTable,
+
+        [Parameter(Mandatory=$false)]
+        [ValidateSet("Name", "Position")]
+        [String] $ColumnMatchingMethod = "Name",
+       
+        [Parameter(Mandatory=$false)]
+        [Switch] $TruncateTargetTable = $false,
+
+        [Parameter(Mandatory=$false)]
+        [ValidateSet("Quiet", "Exception", "Verbose")]
+        [String] $LoggingLevel = "Verbose"
+    )
+    [String] $ReturnValue = [String]::Empty;
+    [System.Diagnostics.ProcessStartInfo] $ProcessStartInfo = [System.Diagnostics.ProcessStartInfo]::new();
+    $ProcessStartInfo.FileName = $DataMoverExecutablePath
+    $ProcessStartInfo.RedirectStandardError = $true;
+    $ProcessStartInfo.RedirectStandardOutput = $true;
+    $ProcessStartInfo.RedirectStandardInput = $true;
+    $ProcessStartInfo.UseShellExecute = $false;
+    $ProcessStartInfo.Arguments = @(
+        "df2ss"
+
+        [String]::Format("-dfPath `"{0}`"", $DelimitedFilePath),
+        [String]::Format("-cd `"{0}`"",
+            ($ColumnDelimiter.Equals("`t") ? "\t" : $ColumnDelimiter)
+        ),
+        [String]::Format("{0}",
+            ($HasHeaderRow ? "-head" : "")
+        ),
+        [String]::Format("{0}",
+            (($Columns.Length > 0) ? 
+                [String]::Format("-cols `"{0}`"", ($Columns -join ",")) :
+                "")
+        ),
+
+        [String]::Format("-ssConn `"{0}`"", $SQLServerConnectionString),
+        [String]::Format("-trgSchema `"{0}`"", $SQLServerSchema),
+        [String]::Format("-trgTable `"{0}`"", $SQLServerTable),
+
+        [String]::Format("-m `"{0}`"", $ColumnMatchingMethod),
+        [String]::Format("{0}",
+            ($TruncateTargetTable ? "-trunc" : "")
+        ),
+        [String]::Format("-ll `"{0}`"", $LoggingLevel)
+    );
+    [System.Diagnostics.Process] $Process = [System.Diagnostics.Process]::new();
+    $Process.StartInfo = $ProcessStartInfo;
+    [void] $Process.Start();
+    [void] $Process.WaitForExit();
+    $ReturnValue = $Process.StandardOutput.ReadToEnd();
+    Return $ReturnValue;
+}
+#endregion Delimited File
+
+
 
 Function Invoke-DataMoverHelp()
 {

@@ -12,6 +12,7 @@ namespace DataMover.Core
 		public String? QualifiedDatabaseName { get; set; }
 		public String QualifiedObjectName { get; set; }
 		public List<DatabaseTableColumn> GetColumns();
+		public void SetColumns(IEnumerable<DatabaseTableColumn> columns);
 		public void SetQuailifiedNames(String? qualifiedDatabaseName, String qualifiedObjectName);
 		public void Truncate();
 

@@ -4,30 +4,53 @@ using System.Collections.Generic;
 
 namespace DataMover.Core
 {
-	public class DataMoverHelpCommand(PluginDescriptors pluginDescriptors) : CommandBase(
-            HelpCommand.CommandName,
-            "Used to display help.",
-			"Help [command]",
-            "{EXEPath} help [command]",
-            ["help"],
-			new CommandArgumentBase[] {
-					CommandArgumentBase.CreateSimpleArgument("Command", "c", "Command to get help on.", false)
-			}
-	)
+	public class DataMoverHelpCommand : CommandBase
 	{
-		private readonly PluginDescriptors _PluginDescriptors = pluginDescriptors;
+		public PluginDescriptors? PluginDescriptors { get; set; }
+
+		public DataMoverHelpCommand()
+			: base(
+				HelpCommand.CommandName,
+				"Used to display help.",
+				"Help [command]",
+				"{EXEPath} help [command]",
+				["help"],
+				new CommandArgumentBase[] {
+						CommandArgumentBase.CreateSimpleArgument("Command", "c", "Command to get help on.", false)
+				}
+		) { }
+
+		public DataMoverHelpCommand(PluginDescriptors pluginDescriptors)
+			: base(
+				HelpCommand.CommandName,
+				"Used to display help.",
+				"Help [command]",
+				"{EXEPath} help [command]",
+				["help"],
+				new CommandArgumentBase[] {
+						CommandArgumentBase.CreateSimpleArgument("Command", "c", "Command to get help on.", false)
+				}
+		)
+		{
+			this.PluginDescriptors = pluginDescriptors;
+		}
 
 		public override ConsoleText[] GetHelpText()
 		{
 			List<ConsoleText> returnValue = [];
+			if (
+				this.PluginDescriptors is null
+				|| this.PluginDescriptors.Count < 0)
+				this.PluginDescriptors = PluginDescriptors.LoadFromFile(Path.Combine(AppContext.BaseDirectory, "plugins", "plugins.json"));
+			this.PluginDescriptors ??= [];
 			returnValue.AddRange([
 				ConsoleText.Red("To view help for a specific command use:"),
 				ConsoleText.BlankLines(2),
 				ConsoleText.DarkGreen("  DataMover help {command name or alias}"),
 				ConsoleText.BlankLines(2)
 			]);
-			returnValue.AddRange(this._PluginDescriptors.Describe());
-			return [.. returnValue];
+			returnValue.AddRange(this.PluginDescriptors.Describe());
+			return [..returnValue];
 		}
 
 		public override void Execute()

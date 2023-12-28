@@ -1,4 +1,5 @@
 ﻿using BDMCommandLine;
+using Newtonsoft.Json;
 using System.Collections;
 using System.Runtime.CompilerServices;
 
@@ -125,6 +126,24 @@ namespace DataMover.Core.Descriptors
 				returnValue.Add(ConsoleText.BlankLine());
 			}
 			return [.. returnValue];
+		}
+
+		public void SaveToFile(String filePath)
+			=> File.WriteAllText(
+				filePath,
+				JsonConvert.SerializeObject(this));
+
+		public static PluginDescriptors LoadFromFile(String filePath)
+		{
+			PluginDescriptors returnValue = [];
+			if (File.Exists(filePath))
+			{
+				String json = File.ReadAllText(filePath);
+				var temp = JsonConvert.DeserializeObject<List<PluginDescriptor>>(json);
+				if (temp is not null)
+					returnValue.AddRange(temp);
+			}
+			return returnValue;
 		}
 	}
 }
