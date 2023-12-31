@@ -1,8 +1,8 @@
 {
   "profiles": {
     "PluginTester": {
-      "commandName": "Project",
-      "commandLineArgs": "ss2df -ssConn \"Server=tsd-sql02-aws.fox.local;Database=Integrations;TrustServerCertificate=True;Trusted_Connection=True;Workstation ID=TUL-IT-WL-19;Application Name=CancelReservations.ps1;\" -srcSchema \"ThumbIt\" -srcTable \"ReservationReadyToCancel\" -dfPath \"C:\\Users\\bmorris\\source\\repos\\FRACDEV\\data\\Integrations.Scripts\\ThumbIt\\ReservationReadyToCancel.tsv\" -cd \"\\t\" -head  -m \"Name\"  -ll \"Verbose\""
+        "commandName": "Project",
+        "commandLineArgs": "df2ss -dfPath \"C:\\Users\\bmorris\\source\\repos\\FRACDEV\\data\\Integrations.Scripts\\TSD\\ContactFromSanctionList.psv\" -cd \"|\" -head -ssConn \"Server=tsd-sql02-aws.fox.local;Database=Integrations;TrustServerCertificate=True;Trusted_Connection=True;Workstation ID=TUL-IT-WL-19;Application Name=CancelReservations.ps1;\" -trgSchema \"TSD\" -trgTable \"ContactFromSanctionList\" -trunc -m \"Name\"  -ll \"Verbose\""
     }
   }
 }

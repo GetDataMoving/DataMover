@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Title>Data Mover</Title>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <Authors>Bradley Don Morris</Authors>
     <Description>Moves data between various database systems.</Description>
     <Copyright>Copyright © 2023 Bradley Don Morris</Copyright>

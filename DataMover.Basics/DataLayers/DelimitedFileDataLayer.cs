@@ -43,7 +43,7 @@ namespace DataMover.Basics.DataLayers
 
 		public override List<DatabaseTableColumn> GetColumns()
 		{
-			if (this.Columns is null)
+			if (this.Columns is null || this.Columns.Count.Equals(0))
 			{
 				this.Columns ??= [];
 				if (File.Exists(this.FilePath))
