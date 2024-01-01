@@ -11,7 +11,7 @@ namespace DataMover.Core
 
         public void WriteOutput(LogLevel logLevel, params ConsoleText[] texts)
         {
-            switch (LoggingLevel)
+            switch (this.LoggingLevel)
             {
                 case LoggingLevel.Verbose:
                     CommandLine.OutputTextCollection(texts);

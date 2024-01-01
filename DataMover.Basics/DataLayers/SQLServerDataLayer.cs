@@ -1,4 +1,5 @@
-﻿using DataMover.Core;
+﻿using BDMCommandLine;
+using DataMover.Core;
 using Microsoft.Data.SqlClient;
 using System.Data;
 using System.Data.SqlTypes;
@@ -26,10 +27,52 @@ namespace DataMover.Basics.DataLayers
 			this.QualifiedDatabaseName = $"{sqlConnectionStringBuilder.DataSource}.{sqlConnectionStringBuilder.InitialCatalog}";
 		}
 
+		private void OnInfoMessage(Object sender, SqlInfoMessageEventArgs e)
+		{
+			List<ConsoleText> texts = [];
+			if (e.Errors.Count.Equals(1))
+			{
+				SqlError err = e.Errors[0];
+				if (err.Class <= 10)
+				{
+					texts.Add(ConsoleText.Green($"SQL Info: {e.Message}"));
+					texts.Add(ConsoleText.BlankLine());
+				}
+				else
+				{
+					texts.Add(ConsoleText.Red($"SQL Exception: {err.Message} (Severity: {err.Class}, State: {err.State}, Error Number: {err.Number}, Procedure: {err.Procedure}, Line: {err.LineNumber})"));
+					texts.Add(ConsoleText.BlankLine());
+				}
+			}
+			else if (e.Errors.Count > 0)
+			{
+				texts.Add(ConsoleText.Default("SQL Infos/Exceptions: "));
+				texts.Add(ConsoleText.BlankLine());
+				foreach (SqlError err in e.Errors)
+					if (err.Class <= 10)
+					{
+						texts.Add(ConsoleText.Green($"SQL Info: {err.Message}"));
+						texts.Add(ConsoleText.BlankLine());
+					}
+					else
+					{
+						texts.Add(ConsoleText.Red($"SQL Exception: {err.Message} (Severity: {err.Class}, State: {err.State}, Error Number: {err.Number}, Procedure: {err.Procedure}, Line: {err.LineNumber})"));
+						texts.Add(ConsoleText.BlankLine());
+
+					}
+			}
+			base.WriteOutput(LogLevel.Information, [.. texts]);
+		}
+
+
 		public override List<DatabaseTableColumn> GetColumns()
 		{
 			List<DatabaseTableColumn> returnValue = [];
-			using SqlConnection sqlConnection = new(base.ConnectionString);
+			using SqlConnection sqlConnection = new(base.ConnectionString)
+			{
+				FireInfoMessageEventOnUserErrors = true
+			};
+			sqlConnection.InfoMessage += this.OnInfoMessage;
 			using SqlCommand sqlCommand = new()
 			{
 				Connection = sqlConnection,
@@ -76,7 +119,11 @@ namespace DataMover.Basics.DataLayers
 
 		public override void Truncate()
 		{
-			using SqlConnection sqlConnection = new(base.ConnectionString);
+			using SqlConnection sqlConnection = new(base.ConnectionString)
+			{
+				FireInfoMessageEventOnUserErrors = true
+			};
+			sqlConnection.InfoMessage += this.OnInfoMessage;
 			using SqlCommand sqlCommand = new()
 			{
 				Connection = sqlConnection,
@@ -92,7 +139,11 @@ namespace DataMover.Basics.DataLayers
 		public override DataTable GetDataTable()
 		{
 			DataTable returnValue = new();
-			using SqlConnection sqlConnection = new(base.ConnectionString);
+			using SqlConnection sqlConnection = new(base.ConnectionString)
+			{
+				FireInfoMessageEventOnUserErrors = true
+			};
+			sqlConnection.InfoMessage += this.OnInfoMessage;
 			using SqlCommand sqlCommand = new()
 			{
 				Connection = sqlConnection,
@@ -109,7 +160,11 @@ namespace DataMover.Basics.DataLayers
 		public override void WriteDataTable(DataTable dataTable, List<DatabaseTableColumnMapping> mappings)
 		{
 			List<DatabaseTableColumnMapping> sortedMappings = [.. mappings.OrderBy(m => m.Target.Postion)];
-			using SqlConnection sqlConnection = new(base.ConnectionString);
+			using SqlConnection sqlConnection = new(base.ConnectionString)
+			{
+				FireInfoMessageEventOnUserErrors = true
+			};
+			sqlConnection.InfoMessage += this.OnInfoMessage;
 			sqlConnection.Open();
 			SqlBulkCopy sqlBulkCopy = new(sqlConnection)
 			{
@@ -130,7 +185,12 @@ namespace DataMover.Basics.DataLayers
 
 		public override void ExecuteQuery(String query, Dictionary<String, Object>? parameters)
 		{
-			using SqlConnection sqlConnection = new(base.ConnectionString);
+			using SqlConnection sqlConnection = new(base.ConnectionString)
+			{
+				FireInfoMessageEventOnUserErrors = true
+			};
+			sqlConnection.InfoMessage += this.OnInfoMessage;
+
 			using SqlCommand sqlCommand = new()
 			{
 				Connection = sqlConnection,
@@ -164,7 +224,11 @@ namespace DataMover.Basics.DataLayers
 		public override String ExecuteScalar(String query, Dictionary<String, Object>? parameters)
 		{
 			String returnValue = String.Empty;
-			using SqlConnection sqlConnection = new(base.ConnectionString);
+			using SqlConnection sqlConnection = new(base.ConnectionString)
+			{
+				FireInfoMessageEventOnUserErrors = true
+			};
+			sqlConnection.InfoMessage += this.OnInfoMessage;
 			using SqlCommand sqlCommand = new()
 			{
 				Connection = sqlConnection,

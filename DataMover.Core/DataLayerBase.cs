@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using BDMCommandLine;
+using System.Data;
 
 namespace DataMover.Core
 {
@@ -11,8 +12,23 @@ namespace DataMover.Core
         public String TableName { get; set; }
         public String? QualifiedDatabaseName { get; set; }
         public virtual String QualifiedObjectName { get; set; }
+		public LoggingLevel LoggingLevel { get; set; }
 
-        public DataLayerBase()
+		public virtual void WriteOutput(LogLevel logLevel, params ConsoleText[] texts)
+		{
+			switch (this.LoggingLevel)
+			{
+				case LoggingLevel.Verbose:
+					CommandLine.OutputTextCollection(texts);
+					break;
+				case LoggingLevel.Exception:
+					if (logLevel == LogLevel.Exception)
+						CommandLine.OutputTextCollection(texts);
+					break;
+			}
+		}
+
+		public DataLayerBase()
         {
             this.DataLayerType = "Undefined";
 			this.Description = "Undefined";

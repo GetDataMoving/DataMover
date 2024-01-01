@@ -22,10 +22,12 @@ namespace DataMover.Core
 			try
 			{
 				base.LoggingLevel = base.Arguments.GetEnumValue<LoggingLevel>("LoggingLevel");
+				this.SourceDataLayer.LoggingLevel = base.LoggingLevel;
+				this.TargetDataLayer.LoggingLevel = base.LoggingLevel;
 				this.MatchingMethod = base.Arguments.GetEnumValue<ColumnMatchingMethod>("ColumnMatchingMethod");
 				this.TruncateTarget = base.Arguments.GetFlagValue("TruncateTarget");
 
-				WriteOutput(LogLevel.Information,
+				base.WriteOutput(LogLevel.Information,
 						ConsoleText.Default("Command: "),
 						ConsoleText.Red(base.Name),
 						ConsoleText.BlankLine(),
@@ -34,7 +36,7 @@ namespace DataMover.Core
 				);
 				foreach (ICommandArgument commandArgument in base.Arguments)
 				{
-					WriteOutput(LogLevel.Information,
+					base.WriteOutput(LogLevel.Information,
 						ConsoleText.Default("   "),
 						ConsoleText.Yellow(commandArgument.Name),
 						ConsoleText.Gray(" = "),
@@ -70,13 +72,13 @@ namespace DataMover.Core
 				if (this.Mappings.Any(m => m.Source == null))
 					throw new MissingSourceColumnException(this.MatchingMethod, this.Mappings.Where(m => m.Source == null));
 
-				WriteOutput(LogLevel.Information,
+				base.WriteOutput(LogLevel.Information,
 					ConsoleText.BlankLine(),
 					ConsoleText.Blue($"Column mappings based on \"{this.MatchingMethod}\" matching."),
 					ConsoleText.BlankLine()
 				);
 				foreach (DatabaseTableColumnMapping mapping in this.Mappings)
-					WriteOutput(LogLevel.Information,
+					base.WriteOutput(LogLevel.Information,
 						ConsoleText.Default("   "),
 						ConsoleText.Yellow($"{mapping.Source?.Name} ({mapping.Source?.Postion})"),
 						ConsoleText.Gray(" => "),
@@ -86,7 +88,7 @@ namespace DataMover.Core
 				DataTable sourceDataTable = this.SourceDataLayer.GetDataTable();
 				if (this.TruncateTarget)
 				{
-					WriteOutput(LogLevel.Information,
+					base.WriteOutput(LogLevel.Information,
 						ConsoleText.Blue($"Truncating {this.TargetDataLayer.QualifiedObjectName}."),
 						ConsoleText.BlankLine()
 					);
@@ -94,21 +96,21 @@ namespace DataMover.Core
 				}
 				if (sourceDataTable.Rows.Count > 0)
 				{
-					WriteOutput(LogLevel.Information,
+					base.WriteOutput(LogLevel.Information,
 						ConsoleText.Blue($"Writing {sourceDataTable.Rows.Count} from \"{this.SourceDataLayer.QualifiedObjectName}\" to \"{this.TargetDataLayer.QualifiedObjectName}\"."),
 						ConsoleText.BlankLine()
 					);
 					this.TargetDataLayer.WriteDataTable(sourceDataTable, this.Mappings);
 				}
 				else
-					WriteOutput(LogLevel.Information,
+					base.WriteOutput(LogLevel.Information,
 						ConsoleText.Red($"No rows returned from {this.SourceDataLayer.QualifiedObjectName}."),
 						ConsoleText.BlankLine()
 					);
 			}
 			catch (Exception exception)
 			{
-				WriteOutput(LogLevel.Exception,
+				base.WriteOutput(LogLevel.Exception,
 					ConsoleText.Red("\n*****************************************\n"),
 					ConsoleText.Red(exception.Message),
 					ConsoleText.Red("\n*****************************************\n"),

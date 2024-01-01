@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using BDMCommandLine;
+using System.Data;
 
 namespace DataMover.Core
 {
@@ -11,6 +12,9 @@ namespace DataMover.Core
 		public String TableName { get; set; }
 		public String? QualifiedDatabaseName { get; set; }
 		public String QualifiedObjectName { get; set; }
+		public LoggingLevel LoggingLevel { get; set; }
+		public void WriteOutput(LogLevel logLevel, params ConsoleText[] texts);
+
 		public List<DatabaseTableColumn> GetColumns();
 		public void SetColumns(IEnumerable<DatabaseTableColumn> columns);
 		public void SetQuailifiedNames(String? qualifiedDatabaseName, String qualifiedObjectName);

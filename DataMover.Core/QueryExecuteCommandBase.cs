@@ -16,6 +16,7 @@ namespace DataMover.Core
 			try
 			{
 				base.LoggingLevel = base.Arguments.GetEnumValue<LoggingLevel>("LoggingLevel");
+				this.DataLayer.LoggingLevel = base.LoggingLevel;
 				this.Query = base.Arguments.GetSimpleValue("Query");
 				base.WriteOutput(LogLevel.Information,
 						ConsoleText.Default("Command: "),
