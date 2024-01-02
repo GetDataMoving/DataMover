@@ -2,7 +2,8 @@
   "profiles": {
     "PluginTester": {
         "commandName": "Project",
-        "commandLineArgs": "ssqe -ssConn \"Server=tsd-sql02-aws.fox.local;Database=Integrations;TrustServerCertificate=True;Trusted_Connection=True;Workstation ID=TUL-IT-WL-19;Application Name=CancelReservations.ps1;\" -q \"EXEC [TSD].[GatherContactToSendToSanctionList]\" -ll \"Verbose\""
+        "commandLineArgs": "version"
+        //"commandLineArgs": "ssqe -ssConn \"Server=tsd-sql02-aws.fox.local;Database=Integrations;TrustServerCertificate=True;Trusted_Connection=True;Workstation ID=TUL-IT-WL-19;Application Name=CancelReservations.ps1;\" -q \"EXEC [TSD].[GatherContactToSendToSanctionList]\" -ll \"Verbose\""
     }
   }
 }

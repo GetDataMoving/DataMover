@@ -6,10 +6,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Title>Data Mover</Title>
-    <Version>1.0.3</Version>
-    <Authors>Bradley Don Morris</Authors>
-    <Description>Moves data between various database systems.</Description>
-    <Copyright>Copyright © 2023 Bradley Don Morris</Copyright>
+    <Version>1.0.4</Version>
+    <Authors>GetDataMoving.org</Authors>
+    <Description>Moves data between various database systems</Description>
+    <Copyright>Copyright © 2023 GetDataMoving.org</Copyright>
     <PackageProjectUrl>https://bradleydonmorris.me/packages/DataMover</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryType>https://github.com/bradleydonmorris/DataMover</RepositoryType>
@@ -28,6 +28,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BDMCommandLine" Version="1.6.3" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.2" />
     <PackageReference Include="Npgsql" Version="8.0.1" />
   </ItemGroup>

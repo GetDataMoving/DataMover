@@ -2,11 +2,13 @@
 using BDMCommandLine;
 using DataMover.Core;
 using DataMover.Core.Descriptors;
+using System.Diagnostics;
 using System.Reflection;
 using System.Reflection.Metadata;
 using System.Text.RegularExpressions;
 
 CommandLine commandLine = new("Help");
+CommandLine.AssetVersions.Clear();
 PluginDescriptors pluginDescriptors = [];
 String pluginDirectoryPath = Path.Combine(AppContext.BaseDirectory, "plugins");
 if (!Directory.Exists(pluginDirectoryPath))
@@ -17,9 +19,31 @@ if (!Directory.Exists(pluginDirectoryPath))
 //Make sure to load any plugins needing to be tested.
 AppDomain.CurrentDomain.Load("DataMover.Basics");
 
+CommandLine.AssetVersions.Replace(PluginDescriptor.GetAssetVersion(
+	Assembly.GetExecutingAssembly(),
+	"DataMover", "v0.0.0", "Moves data between various database systems", "Copyright © 2023 GetDataMoving.org",
+	"https://getdatamoving.org/DataMover"
+));
+
 //Check app domain instead of plugin directory
 foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
 {
+	if (assembly.GetName().Name == "DataMover")
+	{
+		CommandLine.AssetVersions.Replace(PluginDescriptor.GetAssetVersion(
+			assembly,
+			"DataMover", "v0.0.0", "Moves data between various database systems", "Copyright © 2023 GetDataMoving.org",
+			"https://getdatamoving.org/DataMover"
+		));
+	}
+	else if (assembly.GetName().Name == "DataMover.Core")
+	{
+		CommandLine.AssetVersions.Replace(PluginDescriptor.GetAssetVersion(
+			assembly,
+			"DataMover.Core", "v0.0.0", "Underlying system for DataMover App", "Copyright © 2023 GetDataMoving.org",
+			"https://getdatamoving.org/DataMover.Core"
+		));
+	}
 	foreach (Type type in assembly.GetTypes())
 	{
 		String fullName = type.FullName ?? type.Name;
@@ -36,7 +60,10 @@ foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
 			{
 				var pluginDescriptor = Activator.CreateInstance(type) as PluginDescriptor;
 				if (pluginDescriptor is not null)
+				{
 					pluginDescriptors.Add(pluginDescriptor);
+					CommandLine.AssetVersions.Replace(pluginDescriptor.GetAssetVersion());
+				}
 			}
 			else if (typeof(ICommand).IsAssignableFrom(type)
 			)

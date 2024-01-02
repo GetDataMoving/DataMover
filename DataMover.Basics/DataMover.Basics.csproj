@@ -5,10 +5,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 	  <Title>Data Mover</Title>
-	  <Version>1.0.3</Version>
-	  <Authors>Bradley Don Morris</Authors>
+	  <Version>1.0.4</Version>
+	  <Authors>GetDataMoving.org</Authors>
 	  <Description>Includes basic plugins for SQL Server, PostgreSQL, and Delimintated Files</Description>
-	  <Copyright>Copyright © 2023 Bradley Don Morris</Copyright>
+	  <Copyright>Copyright © 2023 GetDataMoving.org</Copyright>
 	  <PackageProjectUrl>https://bradleydonmorris.me/packages/DataMover</PackageProjectUrl>
 	  <PackageReadmeFile>README.md</PackageReadmeFile>
 	  <RepositoryType>https://github.com/bradleydonmorris/DataMover</RepositoryType>
@@ -17,7 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BDMCommandLine" Version="1.6.0" />
+    <PackageReference Include="BDMCommandLine" Version="1.6.3" />
   </ItemGroup>
 
 	<ItemGroup>
