@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Title>Data Mover</Title>
-    <Version>1.0.4</Version>
+    <Version>1.0.5</Version>
     <Authors>GetDataMoving.org</Authors>
     <Description>Moves data between various database systems</Description>
     <Copyright>Copyright © 2023 GetDataMoving.org</Copyright>
@@ -28,7 +28,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BDMCommandLine" Version="1.6.3" />
+    <PackageReference Include="BDMCommandLine" Version="1.6.4" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.2" />
     <PackageReference Include="Npgsql" Version="8.0.1" />
   </ItemGroup>
@@ -52,7 +52,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="ECHO To execute, use the following command...&#xD;&#xA;ECHO    &quot;$(ProjectDir)$(OutDir)$(AssemblyName).exe&quot; help&#xD;&#xA;ECHO $(SolutionDir)PublishOutput" />
+    <Exec Command="IF NOT EXIST &quot;$(SolutionDir)PublishOutput\&quot; MKDIR &quot;$(SolutionDir)PublishOutput\&quot;&#xD;&#xA;COPY /Y &quot;$(SolutionDir)PowerShell\PSWrapper.ps1&quot; &quot;$(SolutionDir)PublishOutput\PSWrapper.ps1&quot;&#xD;&#xA;COPY /Y &quot;$(SolutionDir)PowerShell\Test.ps1&quot; &quot;$(SolutionDir)PublishOutput\Test.ps1&quot;&#xD;&#xA;ECHO To execute, use the following command...&#xD;&#xA;ECHO    &quot;$(ProjectDir)$(OutDir)$(AssemblyName).exe&quot; help&#xD;&#xA;" />
   </Target>
 
 </Project>

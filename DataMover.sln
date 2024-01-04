@@ -12,13 +12,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataMover", "DataMover\Data
 		{8AC20245-ABA9-4019-8F09-527D362E5270} = {8AC20245-ABA9-4019-8F09-527D362E5270}
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".repofiles", ".repofiles", "{A2562184-C31E-4BAD-A293-8817C5ABC6A7}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShell", "PowerShell", "{A2562184-C31E-4BAD-A293-8817C5ABC6A7}"
 	ProjectSection(SolutionItems) = preProject
-		PublishOutput\PSWrapper.ps1 = PublishOutput\PSWrapper.ps1
-		PublishOutput\Test.ps1 = PublishOutput\Test.ps1
+		PowerShell\PSWrapper.ps1 = PowerShell\PSWrapper.ps1
+		PowerShell\Test.ps1 = PowerShell\Test.ps1
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PluginTester", "PluginTester\PluginTester.csproj", "{7EAFD1E0-626B-4974-A8FF-E66E105CF507}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PluginTester", "PluginTester\PluginTester.csproj", "{7EAFD1E0-626B-4974-A8FF-E66E105CF507}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -2,7 +2,7 @@
   "profiles": {
     "PluginTester": {
         "commandName": "Project",
-        "commandLineArgs": "version"
+        "commandLineArgs": "ss2df -ssConn \"Server=tsd-sql02-aws.fox.local;Database=Integrations;TrustServerCertificate=True;Trusted_Connection=True;Workstation ID=TUL-IT-WL-19;Application Name=CheckSactionList.ps1;\" -srcSchema \"TSD\" -srcTable \"ContactToSendToSanctionList\" -dfPath \"C:\\Users\\bmorris\\source\\repos\\FRACDEV\\data\\Integrations.Scripts\\TSD\\ContactToSendToSanctionList.psv\" -cd \"|\" -head  -m \"Name\"  -ll \"Verbose\""
         //"commandLineArgs": "ssqe -ssConn \"Server=tsd-sql02-aws.fox.local;Database=Integrations;TrustServerCertificate=True;Trusted_Connection=True;Workstation ID=TUL-IT-WL-19;Application Name=CancelReservations.ps1;\" -q \"EXEC [TSD].[GatherContactToSendToSanctionList]\" -ll \"Verbose\""
     }
   }

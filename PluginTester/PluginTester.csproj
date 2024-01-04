@@ -6,13 +6,13 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PlatformTarget>x64</PlatformTarget>
-    <Version>1.0.4</Version>
+    <Version>1.0.5</Version>
     <Copyright>Copyright © 2023 GetDataMoving.org</Copyright>
     <Description>Moves data between various database systems</Description>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BDMCommandLine" Version="1.6.3" />
+    <PackageReference Include="BDMCommandLine" Version="1.6.4" />
   </ItemGroup>
 
   <ItemGroup>

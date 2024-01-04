@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 	  <Title>Data Mover</Title>
-	  <Version>1.0.4</Version>
+	  <Version>1.0.5</Version>
 	  <Authors>GetDataMoving.org</Authors>
 	  <Description>Includes basic plugins for SQL Server, PostgreSQL, and Delimintated Files</Description>
 	  <Copyright>Copyright © 2023 GetDataMoving.org</Copyright>
@@ -17,7 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BDMCommandLine" Version="1.6.3" />
+    <PackageReference Include="BDMCommandLine" Version="1.6.4" />
   </ItemGroup>
 
 	<ItemGroup>
@@ -36,7 +36,7 @@
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="COPY &quot;$(ProjectDir)$(OutDir)$(AssemblyName).dll&quot; &quot;$(SolutionDir)PublishOutput\plugins\&quot;&#xD;&#xA;COPY &quot;$(ProjectDir)$(OutDir)$(AssemblyName).dll&quot; &quot;$(SolutionDir)\DataMover\plugins\&quot;" />
+		<Exec Command="IF NOT EXIST &quot;$(SolutionDir)PublishOutput\plugins\&quot; MKDIR &quot;$(SolutionDir)PublishOutput\plugins\&quot;&#xD;&#xA;COPY &quot;$(ProjectDir)$(OutDir)$(AssemblyName).dll&quot; &quot;$(SolutionDir)PublishOutput\plugins\&quot;&#xD;&#xA;COPY &quot;$(ProjectDir)$(OutDir)$(AssemblyName).dll&quot; &quot;$(SolutionDir)\DataMover\plugins\&quot;" />
 	</Target>
 
 </Project>
