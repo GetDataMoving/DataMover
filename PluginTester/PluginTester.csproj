@@ -1,5 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
@@ -7,21 +6,17 @@
     <Nullable>enable</Nullable>
     <PlatformTarget>x64</PlatformTarget>
     <Version>1.0.6</Version>
-    <Copyright>Copyright © 2023 GetDataMoving.org</Copyright>
+    <Copyright>Copyright Â© 2023 GetDataMoving.org</Copyright>
     <Description>Moves data between various database systems</Description>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="BDMCommandLine" Version="1.6.5" />
   </ItemGroup>
-
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\DataMover.Basics\DataMover.Basics.csproj" />
     <ProjectReference Include="..\DataMover.Core\DataMover.Core.csproj" />
   </ItemGroup>
-
 </Project>

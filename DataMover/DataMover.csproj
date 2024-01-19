@@ -1,5 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
@@ -9,34 +8,30 @@
     <Version>1.0.6</Version>
     <Authors>GetDataMoving.org</Authors>
     <Description>Moves data between various database systems</Description>
-    <Copyright>Copyright © 2023 GetDataMoving.org</Copyright>
+    <Copyright>Copyright Ã‚Â© 2023 GetDataMoving.org</Copyright>
     <PackageProjectUrl>https://bradleydonmorris.me/packages/DataMover</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryType>https://github.com/bradleydonmorris/DataMover</RepositoryType>
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
-	<PropertyGroup>
-		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
-		<PublishSingleFile>true</PublishSingleFile>
-	</PropertyGroup>
+  <PropertyGroup>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <PublishSingleFile>true</PublishSingleFile>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DebugType>embedded</DebugType>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DebugType>embedded</DebugType>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="BDMCommandLine" Version="1.6.5" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.2" />
     <PackageReference Include="Npgsql" Version="8.0.1" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\DataMover.Core\DataMover.Core.csproj" />
   </ItemGroup>
-
   <ItemGroup>
     <None Update="plugins\DataMover.Basics.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -46,9 +41,7 @@
       <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
-
   <ItemGroup>
     <Folder Include="plugins\" />
   </ItemGroup>
-
 </Project>

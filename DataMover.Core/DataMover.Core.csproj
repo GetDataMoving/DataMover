@@ -1,5 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -8,25 +7,22 @@
     <Version>1.0.6</Version>
     <Authors>GetDataMoving.org</Authors>
     <Description>Underlying system for DataMover App</Description>
-    <Copyright>Copyright © 2023 GetDataMoving.org</Copyright>
+    <Copyright>Copyright Â© 2023 GetDataMoving.org</Copyright>
     <PackageProjectUrl>https://bradleydonmorris.me/packages/DataMover</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryType>https://github.com/bradleydonmorris/DataMover</RepositoryType>
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="BDMCommandLine" Version="1.6.5" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Npgsql" Version="8.0.1" />
   </ItemGroup>
-
   <ItemGroup>
     <None Update="README.md">
       <PackagePath>\</PackagePath>
       <Pack>True</Pack>
     </None>
   </ItemGroup>
-
 </Project>

@@ -1,11 +1,11 @@
-[String] $GetDataMovingRepoDirectoryPath = [IO.Path]::Combine($Env:UserProfile, "source\repos\GetDataMoving");
-[String] $ReleasesDirectoryPath = [IO.Path]::Combine($GetDataMovingRepoDirectoryPath, "Releases");
-[String] $DataMoverSolutionDirectoryPath = [IO.Path]::Combine($GetDataMovingRepoDirectoryPath, "DataMover");
-[String] $DataMoverProjectDirectoryPath = [IO.Path]::Combine($DataMoverSolutionDirectoryPath, "DataMover");
+[String] $GetDataMovingOrgDirectoryPath = [IO.Path]::Combine($Env:UserProfile, "source\repos\GetDataMoving");
+[String] $ReleasesDirectoryPath = [IO.Path]::Combine($GetDataMovingOrgDirectoryPath, "Releases");
+[String] $DataMoverRepoDirectoryPath = [IO.Path]::Combine($GetDataMovingOrgDirectoryPath, "DataMover");
+[String] $DataMoverProjectDirectoryPath = [IO.Path]::Combine($DataMoverRepoDirectoryPath, "DataMover");
 [String] $DataMoverProjectFilePath = [IO.Path]::Combine($DataMoverProjectDirectoryPath, "DataMover.csproj");
-[String] $PublishOutputDirectoryPath = [IO.Path]::Combine($DataMoverSolutionDirectoryPath, "PublishOutput");
+[String] $PublishOutputDirectoryPath = [IO.Path]::Combine($DataMoverRepoDirectoryPath, "PublishOutput");
 [String] $PublishOutputExeFilePath = [IO.Path]::Combine($PublishOutputDirectoryPath, "DataMover.exe");
-[String] $WrappersDirectoryPath = [IO.Path]::Combine($DataMoverSolutionDirectoryPath, "Wrappers");
+[String] $WrappersDirectoryPath = [IO.Path]::Combine($DataMoverRepoDirectoryPath, "Wrappers");
 
 If (![IO.Directory]::Exists($PublishOutputDirectoryPath))
 {
@@ -16,7 +16,7 @@ Copy-Item -Path ([String]::Format("{0}\*", $WrappersDirectoryPath)) -Destination
 Set-Location -Path $DataMoverProjectDirectoryPath;
 dotnet build --configuration "Release"
 dotnet publish -p:PublishProfile=PortableFolder
-Set-Location -Path $DataMoverSolutionDirectoryPath;
+Set-Location -Path $DataMoverRepoDirectoryPath;
 
 [System.Version] $PublishedExeFileVersion = (Get-Item $PublishOutputExeFilePath).VersionInfo.FileVersionRaw
 [String] $PublishedExeFileVersionText = [String]::Format("v{0}.{1}.{2}",
@@ -26,7 +26,7 @@ Set-Location -Path $DataMoverSolutionDirectoryPath;
 [String] $ProjectVersionText = "v";
 If ([IO.File]::Exists($DataMoverProjectFilePath))
 {
-	[String] $ProjectVersionText += ([xml](Get-Content -Path $DataMoverProjectFilePath)).SelectSingleNode('//Project/PropertyGroup[1]/Version/text()').Value;
+	$ProjectVersionText += ([xml](Get-Content -Path $DataMoverProjectFilePath)).SelectSingleNode('//Project/PropertyGroup[1]/Version/text()').Value;
 }
 If ($PublishedExeFileVersionText -eq $ProjectVersionText)
 {
