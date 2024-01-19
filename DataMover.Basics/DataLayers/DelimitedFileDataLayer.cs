@@ -25,7 +25,11 @@ namespace DataMover.Basics.DataLayers
 			: base("DelimitedFile", "Provides access to methods for delimited files.", filePath)
 		{
 			base.SetQuailifiedNames(Path.GetDirectoryName(filePath), filePath);
-			this.ColumnDelimiter = (columnDelimiter.Equals("\\t") ? "\t" : columnDelimiter);
+			this.ColumnDelimiter = columnDelimiter switch
+			{
+				"\\tab" or "\\t" or "`t" or "^t" or "tab" or "{tab}" => "\t",
+				_ => columnDelimiter,
+			};
 			this.HasHeaderRow = hasHeaderRow;
 		}
 
@@ -33,7 +37,11 @@ namespace DataMover.Basics.DataLayers
 			: base("DelimitedFile", "Provides access to methods for delimited files.", filePath)
 		{
 			base.SetQuailifiedNames(Path.GetDirectoryName(filePath), filePath);
-			this.ColumnDelimiter = (columnDelimiter.Equals("\\t") ? "\t" : columnDelimiter);
+			this.ColumnDelimiter = columnDelimiter switch
+			{
+				"\\tab" or "\\t" or "`t" or "^t" or "tab" or "{tab}" => "\t",
+				_ => columnDelimiter,
+			};
 			this.HasHeaderRow = hasHeaderRow;
 			Int32 position = 1;
 			this.Columns = [];

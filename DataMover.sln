@@ -12,13 +12,22 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataMover", "DataMover\Data
 		{8AC20245-ABA9-4019-8F09-527D362E5270} = {8AC20245-ABA9-4019-8F09-527D362E5270}
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShell", "PowerShell", "{A2562184-C31E-4BAD-A293-8817C5ABC6A7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PluginTester", "PluginTester\PluginTester.csproj", "{7EAFD1E0-626B-4974-A8FF-E66E105CF507}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".repofiles", ".repofiles", "{C7B83293-BDA2-4200-879C-F9E1C558534E}"
 	ProjectSection(SolutionItems) = preProject
-		PowerShell\PSWrapper.ps1 = PowerShell\PSWrapper.ps1
-		PowerShell\Test.ps1 = PowerShell\Test.ps1
+		BuildAndPublish.ps1 = BuildAndPublish.ps1
+		LICENSE = LICENSE
+		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PluginTester", "PluginTester\PluginTester.csproj", "{7EAFD1E0-626B-4974-A8FF-E66E105CF507}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Wrappers", "Wrappers", "{D5770A32-31D7-42E9-8E4F-A8A665156C36}"
+	ProjectSection(SolutionItems) = preProject
+		Wrappers\DataMover.ps1 = Wrappers\DataMover.ps1
+		Wrappers\DataMover.py = Wrappers\DataMover.py
+		Wrappers\Test.ps1 = Wrappers\Test.ps1
+		Wrappers\Test.py = Wrappers\Test.py
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

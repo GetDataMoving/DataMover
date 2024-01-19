@@ -18,8 +18,8 @@ namespace DataMover.Basics.Commands
 					+ "-head "
 					+ "-cols \"Column1,Column2\" "
 					+ "-ssConn \"{PostgreSQLConnString}\" "
-					+ "-srcSchema \"{SourceSchema}\" "
-					+ "-srcTable \"{SourceTableOrView}\""
+					+ "-srcSchema \"{TargetSchema}\" "
+					+ "-srcTable \"{TargetTable}\""
 				),
 				["df2pg"],
 				new CommandArgumentBase[] {

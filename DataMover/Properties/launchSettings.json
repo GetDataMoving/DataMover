@@ -2,7 +2,7 @@
   "profiles": {
     "DataMover": {
         "commandName": "Project",
-        "commandLineArgs": "version"
+        "commandLineArgs": "help \"ssqes\""
     }
   }
 }

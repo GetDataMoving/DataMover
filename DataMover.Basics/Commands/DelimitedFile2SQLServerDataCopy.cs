@@ -18,8 +18,8 @@ namespace DataMover.Basics.Commands
 					+ "-head "
 					+ "-cols \"Column1,Column2\" "
 					+ "-ssConn \"{SQLServerConnString}\" "
-					+ "-trgSchema \"{SourceSchema}\" "
-					+ "-trgTable \"{SourceTableOrView}\""
+					+ "-trgSchema \"{TargetSchema}\" "
+					+ "-trgTable \"{TargetTable}\""
 				),
 				["df2ss"],
 				new CommandArgumentBase[] {
