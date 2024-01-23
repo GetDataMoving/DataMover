@@ -1,0 +1,10 @@
+repo: change build scripts
+fix: remove enclosing quotes from arguments
+repo: add README
+fix: apply update to BDMCommandLine package
+feat: add version command
+feat: add info message handling
+fix: delimited file data layer not writing header
+fix: not recognizing delimited file paths
+Initial commit
+Initial commit

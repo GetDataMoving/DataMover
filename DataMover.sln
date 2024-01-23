@@ -17,10 +17,15 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".repofiles", ".repofiles", "{C7B83293-BDA2-4200-879C-F9E1C558534E}"
 	ProjectSection(SolutionItems) = preProject
 		BuildAndPublish.ps1 = BuildAndPublish.ps1
+		BuildChangeLog.ps1 = BuildChangeLog.ps1
+		BumpVersion.ps1 = BumpVersion.ps1
+		CHANGELOG.md = CHANGELOG.md
+		CommitLog.txt = CommitLog.txt
 		CommitNewVersion.ps1 = CommitNewVersion.ps1
+		FullSend.ps1 = FullSend.ps1
 		LICENSE = LICENSE
+		PublishRelease.ps1 = PublishRelease.ps1
 		README.md = README.md
-		Release.ps1 = Release.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Wrappers", "Wrappers", "{D5770A32-31D7-42E9-8E4F-A8A665156C36}"
