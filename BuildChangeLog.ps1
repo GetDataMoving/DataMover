@@ -67,6 +67,8 @@ ForEach ($Key In ($Entries.Keys | Sort-Object -Descending))
             { $CommitType = "Feature"; }
         ElseIf ($Entries[$Key]["Message"].StartsWith("repo"))
             { $CommitType = "Repository"; }
+        ElseIf ($Entries[$Key]["Message"].StartsWith("ignore"))
+            { $CommitType = "Ignored"; }
         [PSObject] $Commit = [PSObject]::new();
         Add-Member -InputObject $Commit -TypeName "DateTime" -NotePropertyName "DateTime" -NotePropertyValue ($Entries[$Key]["DateTime"]);
         Add-Member -InputObject $Commit -TypeName "String" -NotePropertyName "Type" -NotePropertyValue $CommitType;
@@ -82,7 +84,11 @@ ForEach ($Release In $Releases)
 {
     If ($Release.Tag -ne "Unreleased")
     {
-        $Markdown += [String]::Format("## [{0}](https://github.com/GetDataMoving/DataMover/releases/tag/{0}) ({1})`n`n",
+        $Markdown += [String]::Format(
+            (
+                "## [{0}](https://github.com/GetDataMoving/DataMover/releases/tag/{0}) ({1})`n" +
+                "[![Download](https://bradleydonmorris.github.io/images/octicon-file-zip.png `"Download {0}.zip`") Download {0}.zip](https://github.com/GetDataMoving/DataMover/releases/download/{0}/{0}.zip)`n`n"
+            ),
             $Release.Tag,
             $Release.DateTime.ToString("yyyy-MM-dd")
         );
@@ -91,12 +97,14 @@ ForEach ($Release In $Releases)
             $Markdown += "### Commits`n"
             ForEach ($Commit In $Release.Commits)
             {
-                $Markdown += [String]::Format("* [{0}](https://github.com/GetDataMoving/DataMover/commit/{1}) {2} {3}`n",
-                    $Commit.AbbreviatedHash,
-                    $Commit.FullHash,
-                    $Commit.Message,
-                    $Commit.Type
-                );
+                If ($Commit.Type -ne "Ignored")
+                {
+                    $Markdown += [String]::Format("* [{0}](https://github.com/GetDataMoving/DataMover/commit/{1}) {2}`n",
+                        $Commit.AbbreviatedHash,
+                        $Commit.FullHash,
+                        $Commit.Message
+                    );
+                }
             }
             $Markdown += "`n";
         }
